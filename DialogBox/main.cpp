@@ -1,7 +1,8 @@
 ﻿#include<Windows.h>
 #include"resource.h"
 
-CONST CHAR LOGIN_INVITATION[] = "Введите имя пользователя";
+//CONST CHAR LOGIN_INVITATION[] = "Введите имя пользователя";
+CONST CHAR g_sz_LOGIN_INVITATION[] = "Введите имя пользователя";
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
@@ -19,8 +20,10 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
 		SendMessage(hwnd, WM_SETICON, 0, (LPARAM)hIcon);
-		HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_LOGIN);
-		SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)LOGIN_INVITATION);
+		//HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_LOGIN);
+		HWND hEditLogin = GetDlgItem(hwnd, IDC_EDIT_LOGIN);
+		//SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)LOGIN_INVITATION);
+		SendMessage(hEditLogin, WM_SETTEXT, 0, (LPARAM)g_sz_LOGIN_INVITATION);
 	}
 		break;
 	case WM_COMMAND:
@@ -30,11 +33,15 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			CONST INT SIZE = 256;
 			CHAR sz_buffer[SIZE] = {};
-			SendMessage((HWND)lParam, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
-			if (HIWORD(wParam) == EN_SETFOCUS && strcmp(sz_buffer, LOGIN_INVITATION) == 0)
-				SendMessage((HWND)lParam, WM_SETTEXT, 0, (LPARAM)"");
+			HWND hEditLogin = GetDlgItem(hwnd, IDC_EDIT_LOGIN);
+			//SendMessage((HWND)lParam, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
+			SendMessage(hEditLogin, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
+			//if (HIWORD(wParam) == EN_SETFOCUS && strcmp(sz_buffer, LOGIN_INVITATION) == 0)
+			if (HIWORD(wParam) == EN_SETFOCUS && strcmp(sz_buffer, g_sz_LOGIN_INVITATION) == 0)
+				//SendMessage((HWND)lParam, WM_SETTEXT, 0, (LPARAM)"");
+				SendMessage(hEditLogin, WM_SETTEXT, 0, (LPARAM)"");
 			if (HIWORD(wParam) == EN_KILLFOCUS && strcmp(sz_buffer,"") == 0)
-				SendMessage((HWND)lParam, WM_SETTEXT, 0, (LPARAM)LOGIN_INVITATION);
+				SendMessage((HWND)lParam, WM_SETTEXT, 0, (LPARAM)g_sz_LOGIN_INVITATION);
 		}
 		case IDC_BUTTON_Copy:
 		{
