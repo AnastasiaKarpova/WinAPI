@@ -6,6 +6,7 @@
 CONST CHAR* g_VALUES[] = { "This", "is", "my", "first", "List", "Box" };
 
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK DlgProcAddItem(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
@@ -33,6 +34,10 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
+		case IDC_BUTTON_ADD:
+			DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG_ADD), hwnd, (DLGPROC)DlgProcAddItem, 0);
+
+			break;
 		case IDOK:
 		{
 			CONST INT SIZE = 256;
@@ -47,6 +52,52 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 
 			break;
+		case IDCANCEL:
+			EndDialog(hwnd, 0);
+			break;
+		}
+		break;
+	case WM_CLOSE:
+		EndDialog(hwnd, 0);
+		break;
+	}
+	return FALSE;
+}
+
+BOOL CALLBACK DlgProcAddItem(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_INITDIALOG:
+		SetFocus(GetDlgItem(hwnd, IDC_EDIT_ADD));
+		break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDOK:
+		{
+			CONST INT SIZE = 256;
+			CHAR sz_buffer[SIZE]{};
+			HWND hEditAdd = GetDlgItem(hwnd, IDC_EDIT_ADD);
+			SendMessage(hEditAdd, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
+
+			HWND hList = GetDlgItem(GetParent(hwnd), IDC_LIST1);
+			//GetParent(hwnd) возвращает родительское окно (HWND родительского окна) дл€ указанного окна
+			if (SendMessage(hList, LB_FINDSTRING, -1, (LPARAM)sz_buffer) == LB_ERR)
+			{
+				SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)sz_buffer);
+			}
+			else
+			{
+				INT result = MessageBox(hwnd, 
+					"“акое хождение уже есть в списке, хотите ввести введите другое значение?", 
+					"Info", 
+					MB_YESNO | MB_ICONQUESTION); 
+				if (result == IDYES)break;
+			}
+			break;
+		}
+
 		case IDCANCEL:
 			EndDialog(hwnd, 0);
 			break;
