@@ -1,4 +1,6 @@
-﻿#include<Windows.h>
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include<Windows.h>
+#include<cstdio>
 
 CONST CHAR g_sz_MY_WINDOW_CLASS[] = "My Window"; //Имя класса окна
 
@@ -32,15 +34,22 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 		return 0;
 	}
 
-	//2. Слздание окна:
+	//2. Создание окна:
+	INT width = GetSystemMetrics(SM_CXSCREEN);
+	INT height = GetSystemMetrics(SM_CYSCREEN);
+	INT w_width = (width - (width * 3/4)) / 2;
+	INT w_height = (height - (height * 3/4)) / 2;
+	
 	HWND hwnd = CreateWindowEx
 	(
 		NULL,   //ExStyles
 		g_sz_MY_WINDOW_CLASS,   //Class name
 		g_sz_MY_WINDOW_CLASS,   //Window title
 		WS_OVERLAPPEDWINDOW,    //Window style
-		CW_USEDEFAULT, CW_USEDEFAULT, //Window position
-		CW_USEDEFAULT, CW_USEDEFAULT, //Window size
+		//CW_USEDEFAULT, CW_USEDEFAULT, //Window position
+		//CW_USEDEFAULT, CW_USEDEFAULT, //Window size
+		w_width, w_height,
+		width, height,
 		NULL,    //Parent Window
 		NULL,    //Main menu ResourceID for MainWindow or RecousceID foe ChildWindow
 		hInstance,
@@ -49,6 +58,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	ShowWindow(hwnd, nCmdShow); //Задает режим отображения окна 
 	                            //(Развернуто на весь экран, свернуто в окноб свернуто в панель задач)
 	UpdateWindow(hwnd);         //Прорисовывает окно
+	
 
 	//3. Запуск цикла сообщений:
 
@@ -66,6 +76,21 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_CREATE:
+		break;
+	case WM_SIZE: 
+	case WM_MOVE:
+	{
+		RECT rc;
+		GetWindowRect(hwnd, &rc);
+		//int xPos = (GetSystemMetrics(SM_CXSCREEN) - rc.right) / 2;
+		//int yPos = (GetSystemMetrics(SM_CYSCREEN) - rc.bottom) / 2;
+		//SetWindowPos(hwnd, 0, xPos, yPos, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+		int xPos = rc.left;
+		int yPos = rc.top;
+		char sz_title[256];
+		sprintf(sz_title, "Координаты: (%i, %i)", xPos, yPos);
+		SetWindowText(hwnd, sz_title);
+	}
 		break;
 	case WM_COMMAND:
 		break;
