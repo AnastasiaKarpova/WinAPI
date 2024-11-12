@@ -3,8 +3,6 @@
 #include<cstdio>
 #include"resource.h"
 
-
-
 CONST CHAR g_sz_MY_WINDOW_CLASS[] = "My Window"; //Имя класса окна
 
 INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -99,9 +97,9 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		CreateWindowEx
 		(
 			NULL,
-			"STATIC",
+			"Static",
 			"Эта подпись создана при помощи функции CreateWindowsEx()",
-			WS_CHILD | WS_VISIBLE,
+			WS_CHILDWINDOW | WS_VISIBLE,
 			10, 10,
 			500, 25,
 			hwnd,
@@ -114,7 +112,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			NULL,
 			"Edit",
 			"",
-			WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP /*| WS_GROUP*/,
+			WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | WS_GROUP,
 			10, 48,
 			420, 25,
 			hwnd,
@@ -127,7 +125,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			NULL,
 			"Button",
 			"Применить",
-			WS_CHILD | WS_VISIBLE | WS_TABSTOP /*| WS_GROUP*/,
+			WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_GROUP,
 			340, 84,
 			90, 24,
 			hwnd,
