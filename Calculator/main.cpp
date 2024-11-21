@@ -112,6 +112,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
+		//TODO: Button Icons.
 		CHAR sz_digit[2] = "0";
 		for (int i = 6; i >= 0; i -= 3)
 		{
@@ -144,6 +145,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
+
 		CreateWindowEx
 		(
 			NULL, "Button", ".",
