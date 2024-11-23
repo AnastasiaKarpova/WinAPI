@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS 
+п»ї#define _CRT_SECURE_NO_WARNINGS 
 #include<Windows.h>
 #include<iostream>
 #include<cstdio>
@@ -33,7 +33,7 @@ VOID SetSkin(HWND hwnd, CONST CHAR* skin);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
-	//1.Регистрация класса окна
+	//1.Р РµРіРёСЃС‚СЂР°С†РёСЏ РєР»Р°СЃСЃР° РѕРєРЅР°
 	//WNDCLASSEX wc;
 	WNDCLASSEX wClass;
 	ZeroMemory(&wClass, sizeof(wClass));
@@ -61,7 +61,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 		MessageBox(NULL, "Class registreator faild", NULL, MB_OK | MB_ICONERROR);
 		return 0;
 	}
-	//2. Создание окна:
+	//2. РЎРѕР·РґР°РЅРёРµ РѕРєРЅР°:
 	
 	HWND hwnd = CreateWindowEx
 	(
@@ -77,11 +77,11 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 		hInstance,
 		NULL
 	);
-	ShowWindow(hwnd, nCmdShow); //Задает режим отображения окна 
-								//(Развернуто на весь экран, свернуто в окноб свернуто в панель задач)
-	UpdateWindow(hwnd);         //Прорисовывает окно
-	//3. Запуск цикла сообщений:
-	MSG msg;   //Создаем сообщение
+	ShowWindow(hwnd, nCmdShow); //Р—Р°РґР°РµС‚ СЂРµР¶РёРј РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РѕРєРЅР° 
+								//(Р Р°Р·РІРµСЂРЅСѓС‚Рѕ РЅР° РІРµСЃСЊ СЌРєСЂР°РЅ, СЃРІРµСЂРЅСѓС‚Рѕ РІ РѕРєРЅРѕР± СЃРІРµСЂРЅСѓС‚Рѕ РІ РїР°РЅРµР»СЊ Р·Р°РґР°С‡)
+	UpdateWindow(hwnd);         //РџСЂРѕСЂРёСЃРѕРІС‹РІР°РµС‚ РѕРєРЅРѕ
+	//3. Р—Р°РїСѓСЃРє С†РёРєР»Р° СЃРѕРѕР±С‰РµРЅРёР№:
+	MSG msg;   //РЎРѕР·РґР°РµРј СЃРѕРѕР±С‰РµРЅРёРµ
 	while (GetMessage(&msg, NULL, 0, 0) > 0)
 	{
 		TranslateMessage(&msg);
@@ -116,20 +116,20 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			NULL
 		);
 		HFONT hFont = CreateFont( 
-			g_i_DISPLAY_HEIGHT,			//Высота шрифта  cHeight
-			0,							//Ширина шрифта  cWidth
-			0,							//Угол наклона текста по горизонтали cEscapement
-			0,							//Угол наклона текста по вертикали   cOrientation
-			FW_REGULAR,					//Жирный шрифт  cWeight
-			FALSE,						//Курсив  bItalic
-			FALSE,						//Подчеркнутый  bUnderline
-			FALSE,						//Зачеркнутый  bStrikeOut
-			RUSSIAN_CHARSET,			//Набор символов iCharSet 
-			OUT_DEFAULT_PRECIS,			//Точность вывода iOutPrecision
-			CLIP_DEFAULT_PRECIS,		//Точность отсечения iClipPrecision
-			ANTIALIASED_QUALITY,		//Качество вывода iQuality
-			VARIABLE_PITCH | FF_SCRIPT,	//Тип шрифта iPitchAndFamily
-			TEXT("Baskerville Old Face")//Название шрифта pszFaceName   
+			g_i_DISPLAY_HEIGHT,			//Р’С‹СЃРѕС‚Р° С€СЂРёС„С‚Р°  cHeight
+			0,							//РЁРёСЂРёРЅР° С€СЂРёС„С‚Р°  cWidth
+			0,							//РЈРіРѕР» РЅР°РєР»РѕРЅР° С‚РµРєСЃС‚Р° РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё cEscapement
+			0,							//РЈРіРѕР» РЅР°РєР»РѕРЅР° С‚РµРєСЃС‚Р° РїРѕ РІРµСЂС‚РёРєР°Р»Рё   cOrientation
+			FW_REGULAR,					//Р–РёСЂРЅС‹Р№ С€СЂРёС„С‚  cWeight
+			FALSE,						//РљСѓСЂСЃРёРІ  bItalic
+			FALSE,						//РџРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№  bUnderline
+			FALSE,						//Р—Р°С‡РµСЂРєРЅСѓС‚С‹Р№  bStrikeOut
+			RUSSIAN_CHARSET,			//РќР°Р±РѕСЂ СЃРёРјРІРѕР»РѕРІ iCharSet 
+			OUT_DEFAULT_PRECIS,			//РўРѕС‡РЅРѕСЃС‚СЊ РІС‹РІРѕРґР° iOutPrecision
+			CLIP_DEFAULT_PRECIS,		//РўРѕС‡РЅРѕСЃС‚СЊ РѕС‚СЃРµС‡РµРЅРёСЏ iClipPrecision
+			ANTIALIASED_QUALITY,		//РљР°С‡РµСЃС‚РІРѕ РІС‹РІРѕРґР° iQuality
+			VARIABLE_PITCH | FF_SCRIPT,	//РўРёРї С€СЂРёС„С‚Р° iPitchAndFamily
+			TEXT("Baskerville Old Face")//РќР°Р·РІР°РЅРёРµ С€СЂРёС„С‚Р° pszFaceName   
 		);
 		SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
 		//TODO: Button Icons.
@@ -138,7 +138,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			for (int j = 0; j < 3; j++)
 			{
-				sz_digit[0] = 49 + i + j; //49 - это ASCII код единицы
+				sz_digit[0] = 49 + i + j; //49 - СЌС‚Рѕ ASCII РєРѕРґ РµРґРёРЅРёС†С‹
 				CreateWindowEx
 				(
 					NULL, "Button", sz_digit,
