@@ -99,6 +99,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	
 	switch (uMsg)
 	{
+	
 	case WM_CREATE:
 	{
 		AllocConsole();
@@ -388,6 +389,44 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//case VK_OEM_PLUS: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0); break;  
 		case VK_RETURN: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0); break;  
 		}
+	}
+	break;
+	case WM_CONTEXTMENU:
+	{
+		HMENU hSubMenu = CreatePopupMenu();
+		InsertMenu(hSubMenu, 0, MF_BYPOSITION | MF_STRING, IDR_METAL_MISTRAL, "Metal Mistral");
+		InsertMenu(hSubMenu, 0, MF_BYPOSITION | MF_STRING, IDR_SQUARE_BLUE, "Square Blue");
+		
+		HMENU hMenu = CreatePopupMenu();
+		InsertMenu(hMenu, 1, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hSubMenu, "Topic");
+		InsertMenu(hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+		InsertMenu(hMenu, 3, MF_POPUP | MF_STRING, IDR_EXIT, "Exit");
+
+		/*AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hMenu, "Topic");
+		AppendMenu(hSubMenu, MF_POPUP | MF_STRING, IDR_METAL_MISTRAL, "metal mistral");
+		AppendMenu(hSubMenu, MF_POPUP | MF_STRING, IDR_SQUARE_BLUE, "square blue");
+		AppendMenu(hSubMenu, MF_POPUP | MF_STRING, 0, NULL);
+		AppendMenu(hSubMenu, MF_POPUP | MF_STRING, IDR_EXIT, "Exit");*/
+			
+
+		/*BOOL menu = TrackPopupMenu(
+			hMenu, TPM_RIGHTBUTTON |
+			TPM_TOPALIGN |
+			TPM_LEFTALIGN,
+			LOWORD(lParam),
+			HIWORD(lParam),
+			0, hwnd, NULL);*/
+		BOOL menu = TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_BOTTOMALIGN | TPM_RETURNCMD, LOWORD(lParam), HIWORD(lParam), 0, hwnd, 0);
+
+		switch (menu)
+		{
+		case IDR_METAL_MISTRAL: SetSkin(hwnd, "metal_mistral");break;
+		case IDR_SQUARE_BLUE: SetSkin(hwnd, "square_blue");break;
+		case IDR_EXIT: DestroyWindow(hwnd); break;
+		}
+		
+		DestroyMenu(hSubMenu); 
+		DestroyMenu(hMenu);
 	}
 	break;
 	case WM_DESTROY:
