@@ -11,8 +11,10 @@ CONST INT g_i_INTERVAL = 5;
 CONST INT g_i_BUTTON_SIZE = 50;
 CONST INT g_i_BUTTON_DOUBLE_SIZE = g_i_BUTTON_SIZE * 2 + g_i_INTERVAL;
 
-CONST INT g_i_DISPLAY_WIDTH = g_i_BUTTON_SIZE*5 + g_i_INTERVAL*4;
-CONST INT g_i_DISPLAY_HEIGHT = 30;
+CONST INT g_i_FONT_HEIGHT = 32;
+CONST INT g_i_FONT_WIDTH = g_i_FONT_HEIGHT * 2 / 5;
+CONST INT g_i_DISPLAY_WIDTH = g_i_BUTTON_SIZE * 5 + g_i_INTERVAL * 4;
+CONST INT g_i_DISPLAY_HEIGHT = g_i_FONT_HEIGHT + 2;
 
 CONST INT g_i_START_X = 10;
 CONST INT g_i_START_Y = 10;
@@ -116,22 +118,39 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
-		HFONT hFont = CreateFont( 
-			g_i_DISPLAY_HEIGHT,			//Высота шрифта  cHeight
-			0,							//Ширина шрифта  cWidth
-			0,							//Угол наклона текста по горизонтали cEscapement
-			0,							//Угол наклона текста по вертикали   cOrientation
-			FW_REGULAR,					//Жирный шрифт  cWeight
-			FALSE,						//Курсив  bItalic
-			FALSE,						//Подчеркнутый  bUnderline
-			FALSE,						//Зачеркнутый  bStrikeOut
-			RUSSIAN_CHARSET,			//Набор символов iCharSet 
-			OUT_DEFAULT_PRECIS,			//Точность вывода iOutPrecision
-			CLIP_DEFAULT_PRECIS,		//Точность отсечения iClipPrecision
-			ANTIALIASED_QUALITY,		//Качество вывода iQuality
-			VARIABLE_PITCH | FF_SCRIPT,	//Тип шрифта iPitchAndFamily
-			TEXT("Baskerville Old Face")//Название шрифта pszFaceName   
+		AddFontResourceEx("Fonts\\Calculator.ttf", FR_PRIVATE, 0);
+		HFONT hFont = CreateFont(
+			g_i_FONT_HEIGHT,
+			g_i_FONT_WIDTH,
+			0,
+			0,
+			FW_BOLD,
+			FALSE,
+			FALSE,
+			FALSE,
+			ANSI_CHARSET,
+			OUT_TT_PRECIS,
+			CLIP_TT_ALWAYS,
+			ANTIALIASED_QUALITY,
+			FF_DONTCARE,
+			"Calculator"
 		);
+		//HFONT hFont = CreateFont( 
+		//	g_i_DISPLAY_HEIGHT,			//Высота шрифта  cHeight
+		//	0,							//Ширина шрифта  cWidth
+		//	0,							//Угол наклона текста по горизонтали cEscapement
+		//	0,							//Угол наклона текста по вертикали   cOrientation
+		//	FW_REGULAR,					//Жирный шрифт  cWeight
+		//	FALSE,						//Курсив  bItalic
+		//	FALSE,						//Подчеркнутый  bUnderline
+		//	FALSE,						//Зачеркнутый  bStrikeOut
+		//	RUSSIAN_CHARSET,			//Набор символов iCharSet 
+		//	OUT_DEFAULT_PRECIS,			//Точность вывода iOutPrecision
+		//	CLIP_DEFAULT_PRECIS,		//Точность отсечения iClipPrecision
+		//	ANTIALIASED_QUALITY,		//Качество вывода iQuality
+		//	VARIABLE_PITCH | FF_SCRIPT,	//Тип шрифта iPitchAndFamily
+		//	TEXT("Baskerville Old Face")//Название шрифта pszFaceName   
+		//);
 		SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
 		//TODO: Button Icons.
 		CHAR sz_digit[2] = "0";
@@ -277,6 +296,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		);
 		SendMessage(hButtonE, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hBitmap_equal);*/
 		SetSkin(hwnd, "metal_mistral");
+	}
+		break;
+	case WM_CTLCOLOREDIT:
+	{
+		HDC hdc = (HDC)wParam;
+		HWND hEdit = (HWND)lParam;
+		if (GetDlgCtrlID(hEdit) == IDC_EDIT_DISPLAY)
+		{
+			SetTextColor(hdc, RGB(255, 255, 0));
+			SetBkColor(hdc, RGB(0, 0, 100));
+			HBRUSH hbrBackgroud = CreateSolidBrush(RGB(30, 30, 30));
+			//ReleaseDC(hEdit, hdc);
+			return (INT_PTR)hbrBackgroud;
+		}
+		
 	}
 		break;
 	case WM_COMMAND:
@@ -508,7 +542,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 	case WM_DESTROY:
+	{
+		HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
+		HDC hdc = GetDC(hEdit);
+		ReleaseDC(hEdit, hdc);
 		PostQuitMessage(0);
+	}
 		break;
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
