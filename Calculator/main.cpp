@@ -30,6 +30,10 @@ CONST INT g_i_WINDOW_HEIGHT = g_i_DISPLAY_HEIGHT + g_i_START_Y * 2 + (g_i_BUTTON
 
 CONST CHAR* g_OPERATIONS[] = { "+", "-", "*", "/" };
 
+CONST COLORREF g_DISPLAY_BACKGROUND[] = {RGB(0, 0, 100), RGB(0, 50, 0)};
+CONST COLORREF g_DISPLAY_FOREGROUND[] = {RGB(255, 0, 0), RGB(0, 255, 0)};
+CONST COLORREF g_WINDOW_BACKGROUND[] = {RGB(0, 0, 150), RGB(75, 75, 75)};
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 VOID SetSkin(HWND hwnd, CONST CHAR* skin);
 
@@ -52,6 +56,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	wClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 	wClass.hCursor = LoadCursor(hInstance, IDC_ARROW);
 	wClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
+	HBITMAP hBackground = (HBITMAP)LoadImage(hInstance, "Pictures\\bars.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	wClass.hbrBackground = CreatePatternBrush(hBackground);
 
 	wClass.hInstance = hInstance;
 	wClass.lpszMenuName = NULL;
@@ -98,6 +104,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static INT operation = 0;
 	static BOOL input = FALSE;
 	static BOOL input_operation = FALSE;
+
+	/////////////////////////////
+
+	static INT color_index = 0;
+
+	////////////////////////////
 	
 	switch (uMsg)
 	{
@@ -295,7 +307,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			LR_LOADFROMFILE
 		);
 		SendMessage(hButtonE, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hBitmap_equal);*/
-		SetSkin(hwnd, "metal_mistral");
+		SetSkin(hwnd, "square_blue");
 	}
 		break;
 	case WM_CTLCOLOREDIT:
@@ -304,11 +316,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		HWND hEdit = (HWND)lParam;
 		if (GetDlgCtrlID(hEdit) == IDC_EDIT_DISPLAY)
 		{
-			SetTextColor(hdc, RGB(255, 255, 0));
-			SetBkColor(hdc, RGB(0, 0, 100));
-			HBRUSH hbrBackgroud = CreateSolidBrush(RGB(30, 30, 30));
+			SetTextColor(hdc, g_DISPLAY_FOREGROUND[color_index]);
+			SetBkColor(hdc, g_DISPLAY_BACKGROUND[color_index]);
+
+			HBRUSH hbrBackgroud = CreateSolidBrush(g_WINDOW_BACKGROUND[color_index]);
+			SetClassLongPtr(hwnd, GCLP_HBRBACKGROUND, (LONG)hbrBackgroud);
+			SendMessage(hwnd, WM_ERASEBKGND, wParam, 0);
+			//UpdateWindow(hwnd);
 			//ReleaseDC(hEdit, hdc);
-			return (INT_PTR)hbrBackgroud;
+			return (LRESULT)hbrBackgroud;
 		}
 		
 	}
@@ -506,13 +522,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_CONTEXTMENU:
 	{
 		HMENU hSubMenu = CreatePopupMenu();
-		InsertMenu(hSubMenu, 0, MF_BYPOSITION | MF_STRING, IDR_METAL_MISTRAL, "Metal Mistral");
-		InsertMenu(hSubMenu, 0, MF_BYPOSITION | MF_STRING, IDR_SQUARE_BLUE, "Square Blue");
+		InsertMenu(hSubMenu, 0, MF_BYPOSITION | MF_STRING, IDR_SQUARE_BLUE, "Square Blue"); 
+		InsertMenu(hSubMenu, 0, MF_BYPOSITION | MF_STRING, IDR_METAL_MISTRAL, "Metal Mistral"); 
 		
 		HMENU hMenu = CreatePopupMenu();
 		InsertMenu(hMenu, 1, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hSubMenu, "Topic");
 		InsertMenu(hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 		InsertMenu(hMenu, 3, MF_POPUP | MF_STRING, IDR_EXIT, "Exit");
+		BOOL skin_index = TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_BOTTOMALIGN | TPM_RETURNCMD, LOWORD(lParam), HIWORD(lParam), 0, hwnd, 0);
 
 		/*AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hMenu, "Topic");
 		AppendMenu(hSubMenu, MF_POPUP | MF_STRING, IDR_METAL_MISTRAL, "metal mistral");
@@ -528,17 +545,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			LOWORD(lParam),
 			HIWORD(lParam),
 			0, hwnd, NULL);*/
-		BOOL menu = TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_BOTTOMALIGN | TPM_RETURNCMD, LOWORD(lParam), HIWORD(lParam), 0, hwnd, 0);
+		//BOOL menu = TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_BOTTOMALIGN | TPM_RETURNCMD, LOWORD(lParam), HIWORD(lParam), 0, hwnd, 0);
 
-		switch (menu)
+		switch (skin_index)
 		{
-		case IDR_METAL_MISTRAL: SetSkin(hwnd, "metal_mistral");break;
-		case IDR_SQUARE_BLUE: SetSkin(hwnd, "square_blue");break;
+		case IDR_SQUARE_BLUE: SetSkin(hwnd, "square_blue");  break;
+		case IDR_METAL_MISTRAL: SetSkin(hwnd, "metal_mistral"); break;
 		case IDR_EXIT: DestroyWindow(hwnd); break;
 		}
 		
 		DestroyMenu(hSubMenu); 
 		DestroyMenu(hMenu);
+
+		color_index = skin_index - IDR_CONTEXT_MENU - 1;
+		HWND hEditDisplay = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
+		HDC hdcDisplay = GetDC(hEditDisplay);
+		SendMessage(hwnd, WM_CTLCOLOREDIT, (WPARAM)hdcDisplay, (LPARAM)hEditDisplay);
+		ReleaseDC(hEditDisplay, hdcDisplay);
+
+		CHAR sz_buffer[MAX_PATH]{};
+		SendMessage(hEditDisplay, WM_GETTEXT, MAX_PATH, (LPARAM)sz_buffer);
+		SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)sz_buffer);
 	}
 	break;
 	case WM_DESTROY:
