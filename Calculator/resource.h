@@ -7,6 +7,9 @@
 #define IDR_CONTEXT_MENU                200
 #define IDR_METAL_MISTRAL				201
 #define IDR_SQUARE_BLUE					202
+#define IDR_SQUARE_ORANGE               203
+#define IDR_SQUARE_LIGHT_BLUE           204
+#define IDR_SQUARE_LILAC				205
 #define IDR_EXIT						210
 
 #define IDC_EDIT_DISPLAY                999

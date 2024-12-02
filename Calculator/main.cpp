@@ -1,7 +1,7 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS 
 #include<Windows.h>
 #include<iostream>
-#include<cstdio>
+//#include<cstdio>
 #include"resource.h"
 
 //CONST CHAR g_sz_CALC[] = "Calculator";
@@ -32,7 +32,7 @@ CONST CHAR* g_OPERATIONS[] = { "+", "-", "*", "/" };
 
 CONST COLORREF g_DISPLAY_BACKGROUND[] = {RGB(0, 0, 100), RGB(0, 50, 0)};
 CONST COLORREF g_DISPLAY_FOREGROUND[] = {RGB(255, 0, 0), RGB(0, 255, 0)};
-CONST COLORREF g_WINDOW_BACKGROUND[] = {RGB(0, 0, 150), RGB(75, 75, 75)};
+CONST COLORREF g_WINDOW_BACKGROUND[] = {RGB(0, 0, 150), RGB(75, 75, 75), RGB(139,0,139), RGB(0, 0, 0)};
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 VOID SetSkin(HWND hwnd, CONST CHAR* skin);
@@ -56,6 +56,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	wClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 	wClass.hCursor = LoadCursor(hInstance, IDC_ARROW);
 	wClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
+	//wClass.hbrBackground = CreateSolidBrush(RGB(0,0,200));
 	HBITMAP hBackground = (HBITMAP)LoadImage(hInstance, "Pictures\\bars.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	wClass.hbrBackground = CreatePatternBrush(hBackground);
 
@@ -132,8 +133,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		);
 		AddFontResourceEx("Fonts\\Calculator.ttf", FR_PRIVATE, 0);
 		HFONT hFont = CreateFont(
-			g_i_FONT_HEIGHT,
-			g_i_FONT_WIDTH,
+			g_i_FONT_HEIGHT, g_i_FONT_WIDTH,
 			0,
 			0,
 			FW_BOLD,
@@ -316,6 +316,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		HWND hEdit = (HWND)lParam;
 		if (GetDlgCtrlID(hEdit) == IDC_EDIT_DISPLAY)
 		{
+			//SetBkMode(hdc, OPAQUE);
 			SetTextColor(hdc, g_DISPLAY_FOREGROUND[color_index]);
 			SetBkColor(hdc, g_DISPLAY_BACKGROUND[color_index]);
 
@@ -406,7 +407,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case IDC_BUTTON_ASTER: a *= b; break;
 			case IDC_BUTTON_SLASH: a /= b; break;
 			}
-			input = FALSE;
+			//input = FALSE;
 			input_operation = FALSE;
 			if (a == DBL_MIN)strcpy(sz_display, "0");
 			else sprintf(sz_display, "%g", a);
@@ -524,11 +525,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		HMENU hSubMenu = CreatePopupMenu();
 		InsertMenu(hSubMenu, 0, MF_BYPOSITION | MF_STRING, IDR_METAL_MISTRAL, "Metal Mistral");
 		InsertMenu(hSubMenu, 0, MF_BYPOSITION | MF_STRING, IDR_SQUARE_BLUE, "Square Blue");
+		InsertMenu(hSubMenu, 0, MF_BYPOSITION | MF_STRING, IDR_SQUARE_ORANGE, "Square Orange");
+		InsertMenu(hSubMenu, 0, MF_BYPOSITION | MF_STRING, IDR_SQUARE_LIGHT_BLUE, "Square Light Blue");
+		InsertMenu(hSubMenu, 0, MF_BYPOSITION | MF_STRING, IDR_SQUARE_LILAC, "Square Lilac");
 		
 		HMENU hMenu = CreatePopupMenu();
-		InsertMenu(hMenu, 1, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hSubMenu, "Topic");
-		InsertMenu(hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
-		InsertMenu(hMenu, 3, MF_POPUP | MF_STRING, IDR_EXIT, "Exit");
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hSubMenu, "Topic");
+		InsertMenu(hMenu, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+		InsertMenu(hMenu, 2, /*MF_POPUP*/  MF_BYPOSITION | MF_STRING, IDR_EXIT, "Exit");
 		BOOL skin_index = TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_BOTTOMALIGN | TPM_RETURNCMD, LOWORD(lParam), HIWORD(lParam), 0, hwnd, 0);
 
 		/*AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hMenu, "Topic");
@@ -549,15 +553,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		switch (skin_index)
 		{
-		case IDR_SQUARE_BLUE: SetSkin(hwnd, "square_blue");  break;
+		case IDR_SQUARE_BLUE: SetSkin(hwnd, "square_blue"); break;
 		case IDR_METAL_MISTRAL: SetSkin(hwnd, "metal_mistral"); break;
-		case IDR_EXIT: DestroyWindow(hwnd); break;
+		case IDR_SQUARE_ORANGE: SetSkin(hwnd, "square_orange"); break;
+		case IDR_SQUARE_LIGHT_BLUE: SetSkin(hwnd, "square_light_blue"); break; 
+		case IDR_SQUARE_LILAC: SetSkin(hwnd, "square_lilac"); break; 
+		case IDR_EXIT: DestroyWindow(hwnd);/* break;*/
 		}
 		
 		DestroyMenu(hSubMenu); 
 		DestroyMenu(hMenu);
 
-		if(skin_index >= IDR_SQUARE_BLUE && skin_index <= IDR_METAL_MISTRAL)
+		if(skin_index >= IDR_SQUARE_BLUE && skin_index <= IDR_SQUARE_LILAC)
 		{
 			color_index = skin_index - IDR_CONTEXT_MENU - 1;
 			HWND hEditDisplay = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
@@ -612,7 +619,7 @@ VOID SetSkin(HWND hwnd, CONST CHAR* skin)
 	//CHAR sz_path[MAX_PATH]{};
 	CHAR sz_filename[FILENAME_MAX]{}; 
 	//CHAR sz_full_name[MAX_PATH]{};
-	for (int i = 0; i < 18; i++)
+	for (INT i = 0; i < 18; i++)
 	{
 		HWND hButton = GetDlgItem(hwnd, IDC_BUTTON_0 + i);
 		sprintf(sz_filename, "ButtonsBMP\\%s\\%s.bmp", skin, g_BUTTON_FILENAME[i]);
