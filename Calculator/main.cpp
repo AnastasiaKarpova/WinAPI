@@ -111,6 +111,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	/////////////////////////////
 
 	static INT color_index = 0;
+	static HANDLE hMyFont = NULL;
 
 	////////////////////////////
 	
@@ -134,6 +135,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			NULL
 		);
 		AddFontResourceEx("Fonts\\Calculator.ttf", FR_PRIVATE, 0);
+		HINSTANCE hInstFont = LoadLibrary("..\\x64\\Debug\\Font Only DLL.dll");  //.. - выход в родительский каталог
+		HRSRC hFontRes = FindResource(hInstFont, MAKEINTRESOURCE(99), "BINARY");
+		HGLOBAL hFntMem = LoadResource(hInstFont, hFontRes);
+		VOID* fntData = LockResource(hFntMem);
+		DWORD nFonts = 0;
+		DWORD len = SizeofResource(hInstFont, hFontRes);
+		hMyFont = AddFontMemResourceEx(fntData, len, nullptr, &nFonts);
 		HFONT hFont = CreateFont(
 			g_i_FONT_HEIGHT, g_i_FONT_WIDTH,
 			0,
@@ -147,8 +155,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			CLIP_TT_ALWAYS,
 			ANTIALIASED_QUALITY,
 			FF_DONTCARE,
-			"Calculator"
+			"Digital-7"
+			//"Calculator"
 		);
+		//RemoveFontMemResourceEx(hMyFont);
+		//FreeLibrary(hInstFont);
 		//HFONT hFont = CreateFont( 
 		//	g_i_DISPLAY_HEIGHT,			//Высота шрифта  cHeight
 		//	0,							//Ширина шрифта  cWidth
@@ -166,6 +177,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//	TEXT("Baskerville Old Face")//Название шрифта pszFaceName   
 		//);
 		SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+		FreeLibrary(hInstFont);
 		//TODO: Button Icons.
 		CHAR sz_digit[2] = "0";
 		for (int i = 6; i >= 0; i -= 3)
@@ -582,6 +594,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	break;
 	case WM_DESTROY:
 	{
+		RemoveFontMemResourceEx(hMyFont);
 		HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
 		HDC hdc = GetDC(hEdit);
 		ReleaseDC(hEdit, hdc);
