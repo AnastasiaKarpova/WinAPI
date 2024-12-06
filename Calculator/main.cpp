@@ -37,6 +37,7 @@ CONST COLORREF g_WINDOW_BACKGROUND[] = {RGB(0, 0, 150), RGB(75, 75, 75), RGB(0, 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 VOID SetSkin(HWND hwnd, CONST CHAR* skin);
 VOID SetSkinFromDLL(HWND hwnd, CONST CHAR* skin);
+VOID Key(HWND hwnd, WPARAM wParam, BOOL key);
 
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
@@ -54,12 +55,20 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	//wClass.hIcon = (HICON)LoadImage(hInstance, "calculator.ico", IMAGE_ICON, LR_DEFAULTSIZE, LR_DEFAULTSIZE, LR_LOADFROMFILE);
 	//wClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	//wClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-	wClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+	//wClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 	wClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 	wClass.hCursor = LoadCursor(hInstance, IDC_ARROW);
 	wClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	//wClass.hbrBackground = CreateSolidBrush(RGB(0,0,200));
 	HBITMAP hBackground = (HBITMAP)LoadImage(hInstance, "Pictures\\bars.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	//HANDLE LoadIcon(
+	//	NULL, //HINSTANCE hInst
+	//	"IconDLL.dll", //LPCSTR name
+	//	IMAGE_ICON,  //UINT type
+	//	SM_CXICON, //int cx
+	//	SM_CYICON,	// int cy
+	//	LR_LOADFROMFILE	//UINT fuLoad
+	//);
 	wClass.hbrBackground = CreatePatternBrush(hBackground);
 
 	wClass.hInstance = hInstance;
@@ -431,7 +440,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 		break;
 	case WM_KEYDOWN:
-		if (GetKeyState(VK_SHIFT) < 0)
+	{
+		/*if (GetKeyState(VK_SHIFT) < 0)
 		{
 			if (wParam == 0x38)
 				SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, TRUE, 0);
@@ -465,73 +475,76 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, TRUE, 0);break;
 		case VK_DIVIDE:
 		case VK_OEM_2:
-			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_SLASH), BM_SETSTATE, TRUE, 0);break;  
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_SLASH), BM_SETSTATE, TRUE, 0);break;
 		case VK_RETURN:
 			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_EQUAL), BM_SETSTATE, TRUE, 0);break;
-		}
-		break;
+		}*/
+		Key(hwnd, wParam, TRUE);
+	}
+	 break;
 	case WM_KEYUP:
 	{
-		if (GetKeyState(VK_SHIFT) < 0)
-		{
-			if (wParam == 0x38) 
-			{
-				SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, FALSE, 0);
-				SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_ASTER, 0);
-			}
-		}
-		//if (wParam >= 0x30 && wParam <= 0x39)
-		if (wParam >= '0' && wParam <= '9')
-		{
-			SendMessage(GetDlgItem(hwnd, wParam - '0' + IDC_BUTTON_0), BM_SETSTATE, FALSE, 0); 
-			SendMessage(hwnd, WM_COMMAND, wParam - '0' + IDC_BUTTON_0, 0);
-		}
-		if (wParam >= 0x60 && wParam <= 0x69)
-		{
-			SendMessage(GetDlgItem(hwnd, wParam - 0x60 + IDC_BUTTON_0), BM_SETSTATE, FALSE, 0);
-			SendMessage(hwnd, WM_COMMAND, wParam - 0x60 + IDC_BUTTON_0, 0);
-		}
-		switch (wParam)
-		{
-		case VK_DECIMAL:
-		case VK_OEM_PERIOD: 
-			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_POINT), 0); 
-			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_POINT), BM_SETSTATE, FALSE, 0);
-			break;
-		case VK_ESCAPE: 
-			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_CLEAR), 0);
-			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_CLEAR), BM_SETSTATE, FALSE, 0);
-			break;
-		case VK_BACK: 
-			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_BSP), 0); 
-			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_BSP), BM_SETSTATE, FALSE, 0);
-			break;
-		//case VK_ADD: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_PLUS), 0); break; 
-		case VK_ADD: 
-		case VK_OEM_PLUS: 
-			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_PLUS), 0); 
-			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_PLUS), BM_SETSTATE, FALSE, 0);
-			break;
-		case VK_SUBTRACT: 
-		case VK_OEM_MINUS: 
-			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_MINUS), 0); 
-			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_MINUS), BM_SETSTATE, FALSE, 0);
-			break; 
-		case VK_MULTIPLY: 
-			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_ASTER), 0); 
-			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, FALSE, 0);
-			break;
-		case VK_DIVIDE:
-		case VK_OEM_2: 
-			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_SLASH), 0); 
-			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_SLASH), BM_SETSTATE, FALSE, 0);
-			break;
-		//case VK_OEM_PLUS: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0); break;  
-		case VK_RETURN: 
-			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0); 
-			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_EQUAL), BM_SETSTATE, FALSE, 0);
-			break;  
-		}
+		//if (GetKeyState(VK_SHIFT) < 0)
+		//{
+		//	if (wParam == 0x38) 
+		//	{
+		//		SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, FALSE, 0);
+		//		SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_ASTER, 0);
+		//	}
+		//}
+		////if (wParam >= 0x30 && wParam <= 0x39)
+		//if (wParam >= '0' && wParam <= '9')
+		//{
+		//	SendMessage(GetDlgItem(hwnd, wParam - '0' + IDC_BUTTON_0), BM_SETSTATE, FALSE, 0); 
+		//	SendMessage(hwnd, WM_COMMAND, wParam - '0' + IDC_BUTTON_0, 0);
+		//}
+		//if (wParam >= 0x60 && wParam <= 0x69)
+		//{
+		//	SendMessage(GetDlgItem(hwnd, wParam - 0x60 + IDC_BUTTON_0), BM_SETSTATE, FALSE, 0);
+		//	SendMessage(hwnd, WM_COMMAND, wParam - 0x60 + IDC_BUTTON_0, 0);
+		//}
+		//switch (wParam)
+		//{
+		//case VK_DECIMAL:
+		//case VK_OEM_PERIOD: 
+		//	SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_POINT), 0); 
+		//	SendMessage(GetDlgItem(hwnd, IDC_BUTTON_POINT), BM_SETSTATE, FALSE, 0);
+		//	break;
+		//case VK_ESCAPE: 
+		//	SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_CLEAR), 0);
+		//	SendMessage(GetDlgItem(hwnd, IDC_BUTTON_CLEAR), BM_SETSTATE, FALSE, 0);
+		//	break;
+		//case VK_BACK: 
+		//	SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_BSP), 0); 
+		//	SendMessage(GetDlgItem(hwnd, IDC_BUTTON_BSP), BM_SETSTATE, FALSE, 0);
+		//	break;
+		////case VK_ADD: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_PLUS), 0); break; 
+		//case VK_ADD: 
+		//case VK_OEM_PLUS: 
+		//	SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_PLUS), 0); 
+		//	SendMessage(GetDlgItem(hwnd, IDC_BUTTON_PLUS), BM_SETSTATE, FALSE, 0);
+		//	break;
+		//case VK_SUBTRACT: 
+		//case VK_OEM_MINUS: 
+		//	SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_MINUS), 0); 
+		//	SendMessage(GetDlgItem(hwnd, IDC_BUTTON_MINUS), BM_SETSTATE, FALSE, 0);
+		//	break; 
+		//case VK_MULTIPLY: 
+		//	SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_ASTER), 0); 
+		//	SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, FALSE, 0);
+		//	break;
+		//case VK_DIVIDE:
+		//case VK_OEM_2: 
+		//	SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_SLASH), 0); 
+		//	SendMessage(GetDlgItem(hwnd, IDC_BUTTON_SLASH), BM_SETSTATE, FALSE, 0);
+		//	break;
+		////case VK_OEM_PLUS: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0); break;  
+		//case VK_RETURN: 
+		//	SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0); 
+		//	SendMessage(GetDlgItem(hwnd, IDC_BUTTON_EQUAL), BM_SETSTATE, FALSE, 0);
+		//	break;  
+		//}
+		Key(hwnd, wParam, FALSE);
 	}
 	break;
 	case WM_CONTEXTMENU:
@@ -628,6 +641,105 @@ CONST CHAR* g_BUTTON_FILENAME[] =
 	"button_clr",
 	"button_equal",
 };
+
+VOID Key(HWND hwnd, WPARAM wParam, BOOL key)
+{
+	INT w = (INT)wParam;
+
+	if (GetKeyState(VK_SHIFT) < 0)
+	{
+		if (w == 0x38)
+		{
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, key, 0);
+			if(!key)
+			{
+				SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_ASTER, 0);
+			}
+		}
+	}
+	//if (wParam >= 0x30 && wParam <= 0x39)
+	if (w >= '0' && w <= '9')
+	{
+		SendMessage(GetDlgItem(hwnd, w - '0' + IDC_BUTTON_0), BM_SETSTATE, key, 0);
+		if(!key)
+		{
+			SendMessage(hwnd, WM_COMMAND, w - '0' + IDC_BUTTON_0, 0);
+		}
+	}
+	if (w >= 0x60 && w <= 0x69)
+	{
+		SendMessage(GetDlgItem(hwnd, w - 0x60 + IDC_BUTTON_0), BM_SETSTATE, key, 0);
+		if(!key)
+		{
+			SendMessage(hwnd, WM_COMMAND, w - 0x60 + IDC_BUTTON_0, 0);
+		}
+	}
+	switch (w)
+	{
+	case VK_DECIMAL:
+	case VK_OEM_PERIOD:
+		if (!key)
+		{
+			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_POINT), 0);
+		}
+		SendMessage(GetDlgItem(hwnd, IDC_BUTTON_POINT), BM_SETSTATE, key, 0);
+		break;
+	case VK_ESCAPE:
+		if(!key)
+		{
+		SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_CLEAR), 0);
+		}
+		SendMessage(GetDlgItem(hwnd, IDC_BUTTON_CLEAR), BM_SETSTATE, key, 0);
+		break;
+	case VK_BACK:
+		if (!key)
+		{
+			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_BSP), 0);
+		}
+		SendMessage(GetDlgItem(hwnd, IDC_BUTTON_BSP), BM_SETSTATE, key, 0);
+		break;
+		//case VK_ADD: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_PLUS), 0); break; 
+	case VK_ADD:
+	case VK_OEM_PLUS:
+		if(!key)
+		{
+		SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_PLUS), 0);
+		}
+		SendMessage(GetDlgItem(hwnd, IDC_BUTTON_PLUS), BM_SETSTATE, key, 0);
+		break;
+	case VK_SUBTRACT:
+	case VK_OEM_MINUS:
+		if(!key)
+		{
+		SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_MINUS), 0);
+		}
+		SendMessage(GetDlgItem(hwnd, IDC_BUTTON_MINUS), BM_SETSTATE, key, 0);
+		break;
+	case VK_MULTIPLY:
+		if(!key)
+		{
+		SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_ASTER), 0);
+		}
+		SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, key, 0);
+		break;
+	case VK_DIVIDE:
+	case VK_OEM_2:
+		if(!key)
+		{
+		SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_SLASH), 0);
+		}
+		SendMessage(GetDlgItem(hwnd, IDC_BUTTON_SLASH), BM_SETSTATE, key, 0);
+		break;
+		//case VK_OEM_PLUS: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0); break;  
+	case VK_RETURN:
+		if(!key)
+		{
+		SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0);
+		}
+		SendMessage(GetDlgItem(hwnd, IDC_BUTTON_EQUAL), BM_SETSTATE, key, 0);
+		break;
+	}
+}
 
 VOID SetSkin(HWND hwnd, CONST CHAR* skin)
 {
