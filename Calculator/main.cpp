@@ -43,6 +43,7 @@ VOID SetSkinFromDLL(HWND hwnd, CONST CHAR* skin);
 VOID Key(HWND hwnd, WPARAM wParam, BOOL key);
 VOID GetExeDirectory(CHAR* buffer, DWORD size);
 
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
 	//1.Регистрация класса окна
@@ -807,3 +808,4 @@ VOID GetExeDirectory(CHAR* buffer, DWORD size)
 	GetModuleFileName(NULL, buffer, size);
 	PathRemoveFileSpec(buffer);
 }
+

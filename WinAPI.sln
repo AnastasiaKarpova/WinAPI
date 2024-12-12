@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IconDLL", "IconDLL\IconDLL.
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup1_Calculator", "Setup1_Calculator\Setup1_Calculator.vdproj", "{A1D02B62-FCE6-433B-AE80-09137B03527B}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup2_Calculator", "Setup2_Calculator\Setup2_Calculator.vdproj", "{09BC9F18-1848-4076-AAA4-8654ADFA767C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -128,6 +130,11 @@ Global
 		{A1D02B62-FCE6-433B-AE80-09137B03527B}.Release|x64.ActiveCfg = Release
 		{A1D02B62-FCE6-433B-AE80-09137B03527B}.Release|x64.Build.0 = Release
 		{A1D02B62-FCE6-433B-AE80-09137B03527B}.Release|x86.ActiveCfg = Release
+		{09BC9F18-1848-4076-AAA4-8654ADFA767C}.Debug|x64.ActiveCfg = Debug
+		{09BC9F18-1848-4076-AAA4-8654ADFA767C}.Debug|x86.ActiveCfg = Debug
+		{09BC9F18-1848-4076-AAA4-8654ADFA767C}.Release|x64.ActiveCfg = Release
+		{09BC9F18-1848-4076-AAA4-8654ADFA767C}.Release|x64.Build.0 = Release
+		{09BC9F18-1848-4076-AAA4-8654ADFA767C}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
